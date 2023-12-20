@@ -28,7 +28,7 @@ data "tencentcloud_instance_types" "default" {
 # Create a web server
 resource "tencentcloud_instance" "web" {
   depends_on                 = [tencentcloud_security_group_lite_rule.default]
-  instance_name              = "web server"
+  instance_name              = var.instance_name
   availability_zone          = data.tencentcloud_availability_zones_by_product.default.zones.0.name
   image_id                   = data.tencentcloud_images.default.images.0.image_id
   instance_type              = data.tencentcloud_instance_types.default.instance_types.0.instance_type
@@ -36,6 +36,8 @@ resource "tencentcloud_instance" "web" {
   system_disk_size           = 50
   allocate_public_ip         = true
   internet_max_bandwidth_out = 100
+  vpc_id                     = length(var.vpc_id) > 0 ? var.vpc_id : ""
+  subnet_id                  = length(var.subnet_id) > 0 ? var.subnet_id: ""
   instance_charge_type       = "SPOTPAID"
   orderly_security_groups    = [tencentcloud_security_group.default.id]
   count                      = 1
